@@ -37,6 +37,32 @@
 
         header { text-align: center; padding: 40px 20px; position: relative; }
 
+        /* BOUTON RETOUR AU HUB */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #777;
+            color: #eee;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .home-btn:hover {
+            border-color: white;
+            color: white;
+            transform: translateX(-5px);
+        }
+
         .skin-selector {
             position: absolute; top: 20px; right: 20px;
             background: rgba(0,0,0,0.8); border: 1px solid var(--green); color: var(--green);
@@ -197,6 +223,7 @@
             .scoreboard-bar { flex-direction: column; gap: 15px; text-align: center; }
             h1 { font-size: 3rem; }
             .skin-selector { top: 10px; right: 10px; font-size: 0.8rem; }
+            .home-btn { top: 10px; left: 10px; padding: 5px 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -205,6 +232,11 @@
     <div class="bg-overlay"></div>
 
     <header>
+        <!-- BOUTON RETOUR -->
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-arrow-left"></i> RETOUR AU HUB
+        </a>
+
         <select id="skin-select" class="skin-selector" onchange="changeSkin(this.value)">
             <option value="0">Classique</option>
             <option value="7">Warwick Hyène</option>
@@ -232,8 +264,10 @@
     </header>
 
     <main id="grid">
-        </main>
+        <!-- JS Injection -->
+    </main>
 
+    <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -290,12 +324,10 @@
         let activeTimers = {};
 
         const data = [
-            // NOUVEAU CHAMPION 2025
+            // CHAMPIONS RÉCENTS / AJOUTS
             { id: "Zaahen", name: "Zaheen", diff: "hard", img: "Zaahen", spells: ["Flash", "Ignite"], ult: "140s / 120s / 100s", cheese: false,
               pros: "Ton E (Fear) brise son rythme d'auto-attaques. Si tu survis à son burst passif, tu gagnes sur la durée.",
               cons: "Son Revive (Passif) est trompeur. Ne le dive pas s'il a sa jauge pleine. Il scale très fort." },
-            
-            // AJOUTS DEMANDÉS
             { id: "Yasuo", name: "Yasuo", diff: "medium", img: "Yasuo", spells: ["Flash", "Ignite"], ult: "80s / 55s / 30s", cheese: false, pros: "Ton E réduit ses dégâts critiques. Ton R et E traversent son mur.", cons: "Il dash partout dans tes sbires. Son passif tank une attaque." },
             { id: "Zac", name: "Zac", diff: "easy", img: "Zac", spells: ["Flash", "Teleport"], ult: "130s / 115s / 100s", cheese: false, pros: "Un sac à PV pour toi. Facile à toucher.", cons: "Prends l'anti-heal. Attention aux ganks avec son saut (E)." },
             
@@ -411,7 +443,6 @@
                 const wrDisplay = c.wrValue >= 0 ? Math.round(c.wrValue) + "%" : "-";
                 const cheeseHtml = c.cheese ? '<div class="cheese-icon" title="Win Level 1">🧀</div>' : '';
                 
-                // FALLBACK IMAGE SI ZAAHEN N'EXISTE PAS ENCORE DANS L'API
                 div.innerHTML = `
                     ${cheeseHtml}
                     <div class="card-wr-badge">${wrDisplay} WR</div>
@@ -430,11 +461,8 @@
             currentId = c.id;
             mTitle.innerText = c.name.toUpperCase();
             
-            // Image Header (avec fallback aussi si besoin)
             const imgUrl = `https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${c.img}_0.jpg`;
-            // Astuce pour vérifier l'image en fond css c'est dur, donc on laisse le navigateur gérer ou on met Aatrox si c'est Zaheen
             if(c.id === "Zaahen") {
-                 // Fallback manuel pour le header car CSS background ne gère pas onerror facilement
                  mHeader.style.backgroundImage = `url('https://ddragon.leagueoflegends.com/cdn/img/champion/splash/Aatrox_0.jpg')`; 
             } else {
                  mHeader.style.backgroundImage = `url('${imgUrl}')`;
@@ -443,7 +471,6 @@
             mPros.innerText = c.pros;
             mCons.innerText = c.cons;
             
-            // GENERATION DU TRACKER (MODAL)
             mSpells.innerHTML = c.spells.map(spell => {
                 return `
                 <div class="spell-wrapper" id="spell-btn-${spell}" onclick="toggleSpellTimer('${c.id}', '${spell}')" title="Cliquer pour lancer le timer">
@@ -463,7 +490,6 @@
             saveMsg.style.opacity = "0";
         }
 
-        // --- TRACKER FUNCTIONS ---
         function toggleSpellTimer(champId, spell) {
             const timerKey = `${champId}_${spell}`;
             const cd = spellCDs[spell] || 300; 
