@@ -185,11 +185,38 @@
         #save-btn:hover { background: white; color: black; }
         #save-msg { display: block; text-align: center; color: var(--primary); margin-top: 10px; opacity: 0; transition: 0.3s; }
 
+        /* BOUTON RETOUR AU HUB */
+        .home-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #777;
+            color: #eee;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-family: 'Roboto', sans-serif;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: 0.3s;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .home-btn:hover {
+            border-color: white;
+            color: white;
+            transform: translateX(-5px);
+        }
+
         @media (max-width: 800px) {
             .main-content { flex-direction: column; }
             .scoreboard-bar { flex-direction: column; gap: 15px; text-align: center; }
             h1 { font-size: 3rem; }
             .skin-selector { top: 10px; right: 10px; font-size: 0.8rem; }
+            .home-btn { top: 10px; left: 10px; padding: 5px 10px; font-size: 0.8rem; }
         }
     </style>
 </head>
@@ -198,6 +225,11 @@
     <div class="bg-overlay"></div>
 
     <header>
+        <!-- BOUTON RETOUR (Ici !) -->
+        <a href="index.html" class="home-btn">
+            <i class="fas fa-arrow-left"></i> RETOUR AU HUB
+        </a>
+
         <select id="skin-select" class="skin-selector" onchange="changeSkin(this.value)">
             <option value="0">Classique</option>
             <option value="2">Marquis Vladimir</option>
@@ -226,8 +258,10 @@
     </header>
 
     <main id="grid">
-        </main>
+        <!-- JS Injection -->
+    </main>
 
+    <!-- Modal -->
     <div id="modal" class="modal">
         <div class="modal-content">
             <span class="close-btn">&times;</span>
@@ -501,7 +535,7 @@
             }
         }
 
-        // --- STATS (Clé unique 'vlad_' pour ne pas mélanger avec Warwick/Kassadin) ---
+        // --- STATS (Clé unique 'vlad_' pour ne pas mélanger) ---
         function getStats(id) {
             const s = localStorage.getItem(`vlad_stats_${id}`);
             return s ? JSON.parse(s) : { wins: 0, losses: 0 };
